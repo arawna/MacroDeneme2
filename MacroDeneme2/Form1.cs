@@ -18,12 +18,14 @@ namespace MacroDeneme2
         public Form1()
         {
             InitializeComponent();
+            FormClosing += Form1_FormClosing;
         }
         public static Process cmd;
         public static int YDeger = 5;
         public static int XDeger = 0;
         public static int UykuDeger = 25;
         public static bool Aktif = true;
+        public static Thread repeaterThread;
         private void Form1_Load(object sender, EventArgs e)
         {
             cmd = new Process();
@@ -40,9 +42,13 @@ namespace MacroDeneme2
             textBox2.Text = XDeger.ToString();
             textBox3.Text = UykuDeger.ToString();
 
-            Thread repeaterThread = new Thread(() => ListenerThread());
+            repeaterThread = new Thread(() => ListenerThread());
             repeaterThread.SetApartmentState(ApartmentState.STA);
             repeaterThread.Start();
+        }
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            repeaterThread.Abort();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -70,13 +76,16 @@ namespace MacroDeneme2
                 }
             }
         }
+        public static string XText = "X6G31YL8G9jLgjMBfkRvHKluBq6ABOZk1iMrrC4zy6dnIQ1dhIrGW5aUTqtBi/QOu5xfQYCOwp3cknH3IxjMgQ==";
+        public static string YText = "kSxVQ0cyeImFoyIgBhQRmf8xIrzpQlumplVr6ATsocfIodYSCxYyW8TOjZ09wmfGwubdOQTd4z6a6Q5HctaigQ==";
+        public static string MoveText = "rhGiwrtHM51RGtDdxANu7lzwGkuzDBG67KXAAm9gYu6noEafLGHDCIiHYGbOADADxJ2e6lzcT4FBAdKQqALjcdcqikegIcoKuFceXIUAmli/WYy/iFNrFFt2b1xsC51M";
         public static void Oynat()
         {
-            cmd.StandardInput.WriteLine("$p1 = [System.Windows.Forms.Cursor]::Position.X + "+ XDeger);
+            cmd.StandardInput.WriteLine(XText + XDeger);
             cmd.StandardInput.Flush();
-            cmd.StandardInput.WriteLine("$p2 = [System.Windows.Forms.Cursor]::Position.Y + "+YDeger);
+            cmd.StandardInput.WriteLine(YText + YDeger);
             cmd.StandardInput.Flush();
-            cmd.StandardInput.WriteLine("[System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point($p1, $p2)");
+            cmd.StandardInput.WriteLine(MoveText);
             cmd.StandardInput.Flush();
             Thread.Sleep(UykuDeger);
         }
